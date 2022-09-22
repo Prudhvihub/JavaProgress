@@ -1,0 +1,197 @@
+/*JavaProgramming*/
+
+import java.util.Scanner;
+
+public class JavaProgramming {
+   
+    
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        System.out.println("Name");
+        String name = in.nextLine();
+        System.out.println("ID");
+        int id = in.nextInt();
+        System.out.println("Type");
+        String type = in.nextLine();
+        
+
+        
+        if(type="Remote"){
+            System.out.println("Midterm");
+            Double midterm = in.nextDouble();
+            System.out.println("Finals");
+            Double finals = in.nextDouble();
+    
+            System.out.println("Assignments");
+            Double assignments = in.nextDouble();
+        System.out.println("Discussions");
+        Double discussion = in.nextDouble();
+        Students<RemoteStudents> r = new RemoteStudents(midterm, finals, assignments, discussion);
+        r.print();
+        }
+        else{
+            System.out.println("Midterm");
+            Double midterm = in.nextDouble();
+            System.out.println("Finals");
+            Double finals = in.nextDouble();
+    
+            System.out.println("Assignments");
+            Double assignments = in.nextDouble();
+            Students<InPersonStudents> i = new InPersonStudents(id, name, type, midterm,
+                finals, assignments);
+            i.print();
+
+        }
+
+        name = takeInput("Name");
+        id = Integer.parseInt(takeInput("ID"));
+        type = takeInput("Type");
+        midterm = Double.parseDouble(takeInput("Midterm"));
+        finals = Double.parseDouble(takeInput("Finals"));
+        assignments = Double.parseDouble(takeInput("Assignments"));
+        
+        in.close();
+    }
+
+    
+}
+
+
+/*Students.java*/
+
+public abstract class Students<T> {
+    private int id;
+    private String name;
+    private String type;
+
+    Students(int x, String abc, String xyz) {
+        id = x;
+        name = abc;
+        type = xyz;
+    }
+
+    public String toString() {
+        return "\nName: " + getName() + "\nID: " + getID() + "\nType: " + getType();
+       
+
+
+    }
+    
+ 
+
+    public void setID(int x) {
+        id = x;
+    }
+
+    public void setName(String abc) {
+        name = abc;
+    }
+
+    public void setType(String xyz) {
+        type = xyz;
+    }
+
+    public int getID() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    abstract <K> Double score();
+
+    abstract void print();
+} 
+ 
+ 
+/*RemoteStudents*/
+
+public class RemoteStudents extends Students<RemoteStudents> {
+    Double midtermMarks;
+    Double finalMarks;
+    Double assignmentMarks;
+    Double discussionMarks;
+
+    RemoteStudents(int id, String name, String type, Double midtermMarks, Double finalMarks,
+            Double assignmentMarks, Double discussionMarks) {
+        super(id, name, type);
+        this.midtermMarks = midtermMarks;
+        this.finalMarks = finalMarks;
+        this.assignmentMarks = assignmentMarks;
+        this.discussionMarks = discussionMarks;
+    }
+
+    @Override
+    <K> Double score() {
+        Double ans = (this.midtermMarks * 0.3) + (this.finalMarks * 0.3) + (this.assignmentMarks * 0.3)
+                + (this.discussionMarks * 0.1);
+        return ans;
+    }
+
+    void print() {
+        String out = super.toString();
+        out += "\nMidterm - " + this.midtermMarks;
+        out += "\nFinals - " + this.finalMarks;
+        out += "\nAssignments - " + this.assignmentMarks;
+        out += "\nDiscussion - " + this.discussionMarks;
+        out += "\nThe weighted score for " + this.getName() + " is: " + String.format("%.2f", this.score());
+        System.out.println(out);
+    }
+}
+
+
+/*InPersonStudent*/
+
+public class InPersonStudents extends Students<InPersonStudents> {
+    Double midtermMarks;
+    Double finalMarks;
+    Double assignmentMarks;
+
+    InPersonStudents(int id, String name, String type, Double midtermMarks, Double finalMarks,
+            Double assignmentMarks) {
+        super(id, name, type);
+        this.midtermMarks = midtermMarks;
+        this.finalMarks = finalMarks;
+        this.assignmentMarks = assignmentMarks;
+    }
+
+    @Override
+    <K> Double score() {
+        Double ans = (this.midtermMarks * 0.3) + (this.finalMarks * 0.3) + (this.assignmentMarks * 0.4);
+        return ans;
+    }
+
+    void print() {
+        String out = super.toString();
+        out += "\nMidterm - " + this.midtermMarks;
+        out += "\nFinals - " + this.finalMarks;
+        out += "\nAssignments - " + this.assignmentMarks;
+        out += "\nThe weighted score for " + this.getName() + " is: " + String.format("%.2f", this.score());
+        System.out.println(out);
+    }
+}
+
+The output:
+Name:Jane  
+ID:3245
+Type:Remote
+Midterm:92.0
+Finals:83.0
+Assignments:95.5
+Discussions:95.7
+The weighted score for Jane is: 90.72
+
+Name:John
+ID:2872
+Type:Inperson
+Midterm:82.5
+Finals:80.0
+Assignments:90.7
+The weighted score for John is: 85.03
+
+
