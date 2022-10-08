@@ -1,0 +1,194 @@
+Design a window interface with a frame that has any light shade 
+as background color (5 points). It should have three text fields 
+(15 points), four radio buttons (20 points), and a label (for the 
+equality sign, 5 points) as follows. 
+Write a program such that if the user enters two integers on the 
+text fields and click on any radio buttons the result of the 
+operations appears in the third text field (15 points). The 
+result of division is usually a non-integer, and it should be 
+handled correctly (10 points). Show the use of try-catch block 
+(10 points). You must handle these situations and show a message
+ 
+dialogue box with appropriate message (10 points):
+1) Non integer inputs on one or both text fields.
+2) No input in one or both text fields.
+3) Division by zero.
+Note that, there is no command button on this interface.
+Name your class as Main.
+
+Hint: You need to convert the content of both text fields to 
+integer by using Integer class. It is at the above three cases an 
+exception must happen (need try-catch block) and your program 
+must issue an error message by a dialog box.
+
+
+Answer:
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import java.awt.event.*;
+
+public class Main extends JFrame implements DocumentListener, ActionListener {
+    JTextField t1, t2, result;
+    JRadioButton plus, minus, mul, divide;
+    ButtonGroup bg;
+    JLabel eq;
+
+    Main() {
+        addTextFields();
+        addButton();
+        addEqual();
+        addListeners();
+        setSize(500, 250);
+        setLayout(null);
+        setVisible(true);
+    }
+
+    void addListeners() {
+        t1.getDocument().addDocumentListener(this);
+        t2.getDocument().addDocumentListener(this);
+        plus.addActionListener(this);
+        minus.addActionListener(this);
+        mul.addActionListener(this);
+        divide.addActionListener(this);
+    }
+
+    void addEqual() {
+        eq = new JLabel("=");
+        eq.setBounds(330, 70, 30, 30);
+        add(eq);
+    }
+
+    void addTextFields() {
+        t1 = new JTextField();
+        t2 = new JTextField();
+        result = new JTextField();
+        t1.setBounds(50, 70, 70, 30);
+        t2.setBounds(220, 70, 70, 30);
+        result.setBounds(400, 70, 70, 30);
+        add(t1);
+        add(t2);
+        add(result);
+    }
+
+    void addButton() {
+        plus = new JRadioButton("+");
+        minus = new JRadioButton("-");
+        mul = new JRadioButton("*");
+        divide = new JRadioButton("/");
+        bg = new ButtonGroup();
+        bg.add(plus);
+        bg.add(minus);
+        bg.add(mul);
+        bg.add(divide);
+        add(plus);
+        add(minus);
+        add(mul);
+        add(divide);
+        plus.setBounds(150, 30, 40, 30);
+        minus.setBounds(150, 70, 40, 30);
+        mul.setBounds(150, 110, 40, 30);
+        divide.setBounds(150, 150, 40, 30);
+    }
+
+    public static void main(String args[]) {
+        new Main();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        helper(e);
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        helper(e);
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        helper(e);
+    }
+
+    public void helper(DocumentEvent e) {
+        Document d = e.getDocument();
+        int l = d.getLength();
+        String s;
+        try {
+            s = d.getText(0, l);
+            isNumeric(s);
+        } catch (BadLocationException e1) {
+            e1.printStackTrace();
+        }
+    }
+
+    public boolean isNumeric(String strNum) {
+        if (strNum == null || strNum.length() == 0) {
+            JOptionPane.showMessageDialog(this, "Input must contain an Integer", "Alert",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        try {
+            Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(this, "Input should only contian numeric characters", "Alert",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateInput() {
+        if (!(isNumeric(t1.getText()) && isNumeric(t2.getText()))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        AbstractButton aButton = (AbstractButton) e.getSource();
+        if (!validateInput()) {
+            return;
+        }
+        double ans;
+        Integer a;
+        switch (aButton.getText()) {
+            case "+":
+                ans = Double.parseDouble(t1.getText()) + Double.parseDouble(t2.getText());
+                a = (int) ans;
+                result.setText(a.toString());
+                break;
+
+            case "-":
+                ans = Double.parseDouble(t1.getText()) - Double.parseDouble(t2.getText());
+                a = (int) ans;
+                result.setText(a.toString());
+                break;
+
+            case "*":
+                ans = Double.parseDouble(t1.getText()) * Double.parseDouble(t2.getText());
+                a = (int) ans;
+                result.setText(a.toString());
+                break;
+
+            case "/":
+                if (Double.parseDouble(t2.getText()) == 0.0) {
+                    JOptionPane.showMessageDialog(aButton, "Number can't be divided by zero");
+                    break;
+                }
+                ans = Double.parseDouble(t1.getText()) / Double.parseDouble(t2.getText());
+                a = (int) ans;
+                result.setText(a.toString());
+                break;
+
+            default:
+                break;
+        }
+    }
+}
+
